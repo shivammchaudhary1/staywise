@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { environements } from "../environments/environments.js";
+import { environments } from "../environments/environments.js";
 import { connectDB } from "../database/db.js";
 
 export const appConfiguration = () => {
@@ -12,13 +12,13 @@ export const appConfiguration = () => {
 
   // CORS Configuration
   app.get("/", (req, res) => {
-    res.send("API is running...");
+    res.status(200).json({ message: "API is running..." });
   });
 
-  app.listen(environements.port, async () => {
+  app.listen(environments.port, async () => {
     try {
       await connectDB();
-      console.log(`Server is running on port ${environements.port}`);
+      console.log(`Server is running on port ${environments.port}`);
     } catch (error) {
       console.error("Server failed to start", error);
     }

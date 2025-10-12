@@ -11,6 +11,7 @@ export interface bookingModel {
   propertyId: mongoose.Types.ObjectId;
   checkIn: Date;
   checkOut: Date;
+  totalNumberOfDays: number;
   guests: number;
   totalPrice: number;
   status: BookingStatus;

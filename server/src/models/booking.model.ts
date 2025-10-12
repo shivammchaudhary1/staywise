@@ -21,6 +21,9 @@ const bookingSchema = new mongoose.Schema<bookingModel>(
       type: Date,
       required: true,
     },
+    totalNumberOfDays: {
+      type: Number,
+    },
     guests: {
       type: Number,
       required: true,
@@ -30,6 +33,7 @@ const bookingSchema = new mongoose.Schema<bookingModel>(
       type: Number,
       required: true,
     },
+
     status: {
       type: String,
       enum: Object.values(BookingStatus),

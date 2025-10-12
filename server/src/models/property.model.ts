@@ -3,6 +3,11 @@ import { propertyModel } from "../types/propertyModel.types.js";
 
 const propertyScehma = new mongoose.Schema<propertyModel>(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     title: {
       type: String,
       required: true,

@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
+
 export interface propertyModel {
+  userId: mongoose.Types.ObjectId;
   title: string;
   description: string;
   pricePerNight: number;

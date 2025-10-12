@@ -9,9 +9,10 @@ export const register = async (
   res: Response
 ): Promise<Response | void> => {
   try {
+    console.log("Register endpoint reached!");
     const { name, email, password, role } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -34,7 +35,10 @@ export const register = async (
     await newUser.save();
 
     // Generate token
-    const token = await generateToken({ userId: newUser._id.toString() });
+    const token = await generateToken({
+      userId: newUser._id.toString(),
+      role: newUser.role,
+    });
     res
       .status(201)
       .json({ message: "User registered successfully", success: true, token });
@@ -67,8 +71,13 @@ export const login = async (
         .json({ message: "Invalid credentials", success: false, token: null });
     }
 
+    // console.log("User authenticated successfully:", user);
+
     // Generate token
-    const token = await generateToken({ userId: user._id.toString() });
+    const token = await generateToken({
+      userId: user._id.toString(),
+      role: user.role,
+    });
 
     return res
       .status(200)

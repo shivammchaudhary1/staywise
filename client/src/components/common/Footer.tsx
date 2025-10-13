@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -18,18 +19,36 @@ const Footer = () => {
           </div>
 
           {/* Right side links */}
-          <div className="flex gap-6">
-            <li className="list-none cursor-pointer hover:text-opacity-80">
-              Register
+          <div className="flex gap-2 flex-col-reverse">
+            <li className="list-none cursor-pointer">
+              <Link
+                href="/"
+                className="list-none cursor-pointer font-bold text-white"
+              >
+                All Properties
+              </Link>
             </li>
-            <li className="list-none cursor-pointer hover:text-opacity-80">
-              Login
+            <li className="list-none cursor-pointer">
+              <Link
+                href="/auth/register"
+                className="list-none cursor-pointer font-bold text-white"
+              >
+                Register
+              </Link>
+            </li>
+            <li className="list-none cursor-pointer font-bold">
+              <Link
+                href="/auth/login"
+                className="list-none cursor-pointer text-white"
+              >
+                Login
+              </Link>
             </li>
           </div>
         </div>
 
         {/* Copyright text */}
-        <div className="text-center pt-4 border-t border-opacity-20">
+        <div className="text-center pt-4 border-t border-opacity-20 text-sm text-white">
           © 2025 All rights reserved @shivamchaudhary
         </div>
       </div>

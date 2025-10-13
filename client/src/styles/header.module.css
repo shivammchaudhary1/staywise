@@ -1,0 +1,29 @@
+.navLink {
+  color: var(--background-color);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: 600;
+}
+
+.navLink:hover {
+  color: var(--primary-color);
+}
+
+.loginButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--background-color);
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.loginButton:hover {
+  background-color: var(--primary-color);
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}

@@ -1,26 +1,47 @@
 import React from "react";
 import Button from "@/components/common/Button";
 import styles from "@/styles/auth.module.css";
+import Image from "next/image";
 
 const Login = () => {
   return (
     <>
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+      <section className="relative h-[200px] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <Image
+          src="/assets/hero-image-3.jpg"
+          alt="Hero background"
+          fill
+          // width={400}
+          // height={300}
+          className="object-cover"
+        />
+        <div className="relative z-20 text-center text-white px-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Sign In</h1>
+        </div>
+      </section>
 
-        <form action="" className="flex flex-col gap-5">
-          <input
-            type="email"
-            placeholder="Email"
-            className={`${styles.input}`}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className={`${styles.input}`}
-          />
-          <Button type="submit">Login</Button>
-        </form>
+      {/* form section */}
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
+          <form className="space-y-6">
+            <div className="space-y-4">
+              <input
+                type="email"
+                placeholder="Email"
+                className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Register
+            </Button>
+          </form>
+        </div>
       </div>
     </>
   );

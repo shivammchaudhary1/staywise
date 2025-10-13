@@ -1,35 +1,44 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import styles from "@/styles/header.module.css";
 
 const Header = () => {
   return (
-    <>
-      <div className="px-4 py-2 bg-(-varvar(--background-white))">
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="px-4 py-3">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <Link href="/">
-            <div>
-              <Image
-                src="/assets/staywise-logo.png"
-                alt="StayWise Logo"
-                width={170}
-                height={60}
-              />
-            </div>
+          <Link href="/" className="hover:opacity-90 transition">
+            <Image
+              src="/assets/staywise-logo.png"
+              alt="StayWise Logo"
+              width={170}
+              height={60}
+              priority
+            />
           </Link>
-          <div className="flex gap-4">
-            <Link href="/auth/register">
-              <li className="list-none cursor-pointer">Register</li>
-            </Link>
-            <Link href="/auth/login">
-              <li className="list-none cursor-pointer">Login</li>
-            </Link>
-          </div>
+          <nav>
+            <ul className={styles.navList}>
+              <li>
+                <Link href="/" className={styles.navLink}>
+                  Properties
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth/register" className={styles.navLink}>
+                  Register
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth/login" className={styles.loginButton}>
+                  Login
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
-
-      <div className="text-center pt-4 border-t-2 border-opacity-20 border-[var(--background-color)]"></div>
-    </>
+    </header>
   );
 };
 

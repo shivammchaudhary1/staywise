@@ -5,7 +5,7 @@ import Link from "next/link";
 const Header = () => {
   return (
     <>
-      <div className="px-4 py-2 bg-(-varvar(--background-white)) border-2 border-red-500">
+      <div className="px-4 py-2 bg-(-varvar(--background-white))">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <Link href="/">
             <div>
@@ -27,6 +27,8 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      <div className="text-center pt-4 border-t-2 border-opacity-20 border-[var(--background-color)]"></div>
     </>
   );
 };

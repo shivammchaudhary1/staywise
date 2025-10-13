@@ -3,10 +3,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer
-      style={{ backgroundColor: "var(--background-color)" }}
-      className="mt-auto py-6"
-    >
+    <footer className="mt-auto py-6 bg-[var(--background-color)] text-[var(--text-color-one)]">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-start mb-4">
           {/* Left side with logo */}
@@ -21,10 +18,7 @@ const Footer = () => {
           </div>
 
           {/* Right side links */}
-          <div
-            className="flex gap-6"
-            style={{ color: "var(--text-color-one)" }}
-          >
+          <div className="flex gap-6">
             <li className="list-none cursor-pointer hover:text-opacity-80">
               Register
             </li>
@@ -35,13 +29,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright text */}
-        <div
-          className="text-center pt-4 border-t border-opacity-20"
-          style={{
-            color: "var(--text-color-two)",
-            borderColor: "var(--text-color-one)",
-          }}
-        >
+        <div className="text-center pt-4 border-t border-opacity-20">
           © 2025 All rights reserved @shivamchaudhary
         </div>
       </div>

@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const PropertyPage = () => {
   const data = [
@@ -113,7 +116,7 @@ const PropertyPage = () => {
   ];
 
   return (
-    <>
+    <ProtectedRoute>
       <div className="border-2 p-2 m-5  flex border-gray-300 rounded-lg bg-[var(--text-color-two)]">
         {/* left  */}
         <div className="w-[20vw] p-4 m-2 bg-gray-50 rounded-lg">
@@ -259,7 +262,7 @@ const PropertyPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 

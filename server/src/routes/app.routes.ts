@@ -7,7 +7,7 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 const appRoutes = (app: Application) => {
   // console.log("Registering routes...");
   app.use("/api/auth", authRoutes);
-  app.use("/api/properties", authMiddleware, propertyRoutes);
+  app.use("/api/properties", propertyRoutes);
   app.use("/api/booking", authMiddleware, bookingRoutes);
 
   // console.log("Routes registered successfully!");

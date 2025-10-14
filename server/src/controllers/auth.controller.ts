@@ -39,9 +39,12 @@ export const register = async (
       userId: newUser._id.toString(),
       role: newUser.role,
     });
-    res
-      .status(201)
-      .json({ message: "User registered successfully", success: true, token });
+    res.status(201).json({
+      message: "User registered successfully",
+      success: true,
+      token,
+      user: newUser,
+    });
   } catch (error) {
     res
       .status(500)
@@ -81,7 +84,7 @@ export const login = async (
 
     return res
       .status(200)
-      .json({ message: "Login successful", success: true, token });
+      .json({ message: "Login successful", success: true, token, user });
   } catch (error) {
     return res
       .status(500)

@@ -1,11 +1,12 @@
 import React from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
+import Link from "next/link";
 
 const PropertyPage = () => {
   const data = [
     {
-      _id: "68ecebc9e82786aedaa0e919",
+      _id: "68ecebc9e82786aedaa0e91",
       userId: "68ecea42e82786aedaa0e900",
       title: "Luxury Beachside Villa",
       description:
@@ -26,7 +27,7 @@ const PropertyPage = () => {
       ],
     },
     {
-      _id: "68ecebc9e82786aedaa0e919",
+      _id: "68ecebc9e82786aedaa0e9",
       userId: "68ecea42e82786aedaa0e900",
       title: "Luxury Beachside Villa",
       description:
@@ -47,7 +48,7 @@ const PropertyPage = () => {
       ],
     },
     {
-      _id: "68ecebc9e82786aedaa0e919",
+      _id: "68ecebc9e82786aedaa0e",
       userId: "68ecea42e82786aedaa0e900",
       title: "Luxury Beachside Villa",
       description:
@@ -68,7 +69,7 @@ const PropertyPage = () => {
       ],
     },
     {
-      _id: "68ecebc9e82786aedaa0e919",
+      _id: "68ecebc9e82786aedaa",
       userId: "68ecea42e82786aedaa0e900",
       title: "Luxury Beachside Villa",
       description:
@@ -89,7 +90,7 @@ const PropertyPage = () => {
       ],
     },
     {
-      _id: "68ecebc9e82786aedaa0e919",
+      _id: "68ecebc9e82786aed",
       userId: "68ecea42e82786aedaa0e900",
       title: "Luxury Beachside Villa",
       description:
@@ -246,8 +247,9 @@ const PropertyPage = () => {
                             {property.location.country}
                           </span>
                         </div>
-
-                        <Button>View Details</Button>
+                        <Link href={`/property/${property._id}`}>
+                          <Button>View Details</Button>
+                        </Link>
                       </div>
                     </div>
                   </div>

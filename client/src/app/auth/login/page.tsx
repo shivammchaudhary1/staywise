@@ -38,7 +38,7 @@ const Login = () => {
               />
             </div>
             <Button type="submit" className="w-full">
-              Register
+              Sign In
             </Button>
           </form>
         </div>

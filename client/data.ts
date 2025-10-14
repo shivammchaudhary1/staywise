@@ -1,4 +1,4 @@
-const properties = [
+export const properties = [
   {
     _id: {
       $oid: "68ecebc9e82786aedaa0e919",

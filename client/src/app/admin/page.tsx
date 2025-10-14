@@ -4,13 +4,42 @@ import styles from "@/styles/admin.module.css";
 import Button from "@/components/common/Button";
 import AddProperty from "@/components/admin/AddProperty";
 import SeeAllBooking from "@/components/admin/SeeAllBooking";
+import { addProperty } from "@/apis/propertyService";
+import { PropertyFormData } from "@/types/property";
+import { notify } from "@/utils/notification";
+import { useAuth } from "@/store/authContext";
 
 const AdminPage = () => {
+  const { getToken } = useAuth();
+
   // Toggle state for switching between components
   const [activeView, setActiveView] = useState<"addProperty" | "seeBookings">(
     "addProperty"
   );
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleAddProperty = async (propertyData: PropertyFormData) => {
+    try {
+      setIsLoading(true);
+      // Get token from context
+      const token = getToken();
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      // Call API with token
+      const response = await addProperty(propertyData, token);
+      notify.success({ message: "Property added successfully!" });
+
+      // Reset form (by switching views and back)
+      setActiveView("seeBookings");
+      setTimeout(() => setActiveView("addProperty"), 0);
+    } catch (error: any) {
+      notify.error({ message: error.message || "Failed to add property" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <div className={styles.adminContainer}>
@@ -42,7 +71,11 @@ const AdminPage = () => {
 
         {/* Dynamic Content */}
         <div className="w-full">
-          {activeView === "addProperty" ? <AddProperty /> : <SeeAllBooking />}
+          {activeView === "addProperty" ? (
+            <AddProperty onSubmit={handleAddProperty} isLoading={isLoading} />
+          ) : (
+            <SeeAllBooking />
+          )}
         </div>
       </div>
     </>

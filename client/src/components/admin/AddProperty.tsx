@@ -1,8 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@/components/common/Button";
 
-const AddProperty = () => {
-  const [propertyForm, setPropertyForm] = useState({
+import { PropertyFormData as APIPropertyFormData } from "@/types/property";
+
+// Frontend form data type (with string price for input handling)
+interface FormData {
+  title: string;
+  description: string;
+  pricePerNight: string;
+  location: {
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+  };
+  images: string[];
+}
+
+interface AddPropertyProps {
+  onSubmit: (data: APIPropertyFormData) => void;
+  isLoading?: boolean;
+}
+
+const AddProperty: React.FC<AddPropertyProps> = ({
+  onSubmit,
+  isLoading = false,
+}) => {
+  const [propertyForm, setPropertyForm] = React.useState<FormData>({
     title: "",
     description: "",
     pricePerNight: "",
@@ -60,8 +85,12 @@ const AddProperty = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Property Form Data:", propertyForm);
-    // Add your API call here
+    // Convert string price to number before submitting
+    const apiFormData: APIPropertyFormData = {
+      ...propertyForm,
+      pricePerNight: parseFloat(propertyForm.pricePerNight),
+    };
+    onSubmit(apiFormData);
   };
 
   const resetForm = () => {
@@ -308,8 +337,9 @@ const AddProperty = () => {
         <div className="flex gap-4 pt-6 border-t">
           <Button
             type="submit"
-            text="Add Property"
+            text={isLoading ? "Adding Property..." : "Add Property"}
             className="bg-blue-600 hover:bg-blue-700 px-6 py-2"
+            disabled={isLoading}
           />
           <Button
             type="button"

@@ -7,13 +7,13 @@ import styles from "@/styles/auth.module.css";
 import Image from "next/image";
 import { login as loginUser } from "@/apis/authService";
 import { useAuth } from "@/store/authContext";
+import { notify } from "@/utils/notification";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
@@ -24,30 +24,22 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
   };
 
   const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      notify.error({ message: "Email field is required" });
+      return false;
     }
-
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      notify.error({ message: "Email is invalid" });
+      return false;
+    }
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      notify.error({ message: "Password field is required" });
+      return false;
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,16 +52,11 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await loginUser(formData);
-
-      // Update auth context with user data
+      notify.success({ message: response.message });
       login(response.user);
-
-      // Redirect to home page or dashboard
       router.push("/property");
-    } catch (error) {
-      setErrors({
-        submit: error instanceof Error ? error.message : "Login failed",
-      });
+    } catch (error: any) {
+      notify.error({ message: error.message || "Login failed" });
     } finally {
       setIsLoading(false);
     }
@@ -94,12 +81,6 @@ const Login = () => {
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {errors.submit && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm">{errors.submit}</p>
-              </div>
-            )}
-
             <div className="space-y-4">
               <div>
                 <input
@@ -108,16 +89,9 @@ const Login = () => {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`${
-                    styles.input
-                  } transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
-                    errors.email ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
                   disabled={isLoading}
                 />
-                {errors.email && (
-                  <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-                )}
               </div>
 
               <div>
@@ -127,16 +101,9 @@ const Login = () => {
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`${
-                    styles.input
-                  } transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
-                    errors.password ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
                   disabled={isLoading}
                 />
-                {errors.password && (
-                  <p className="text-red-600 text-sm mt-1">{errors.password}</p>
-                )}
               </div>
             </div>
 

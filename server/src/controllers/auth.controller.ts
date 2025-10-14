@@ -9,17 +9,27 @@ export const register = async (
   res: Response
 ): Promise<Response | void> => {
   try {
-    console.log("Register endpoint reached!");
+    // console.log("Register endpoint reached!");
     const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are mandatory",
+        success: false,
+        token: null,
+      });
+    }
 
     // console.log(req.body);
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User already exists", success: false, token: null });
+      return res.status(400).json({
+        message: "User already exists, Please Log In",
+        success: false,
+        token: null,
+      });
     }
 
     // Hash password
@@ -32,6 +42,7 @@ export const register = async (
       password: hashedPassword,
       role: role ? role : UserRole.User,
     });
+    
     await newUser.save();
 
     // Generate token
@@ -62,16 +73,20 @@ export const login = async (
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "User not found", success: false, token: null });
+      return res.status(404).json({
+        message: "Email ID is not registered.",
+        success: false,
+        token: null,
+      });
     }
 
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
-      return res
-        .status(401)
-        .json({ message: "Invalid credentials", success: false, token: null });
+      return res.status(401).json({
+        message: "You Typed wrong Password.",
+        success: false,
+        token: null,
+      });
     }
 
     // console.log("User authenticated successfully:", user);

@@ -1,6 +1,6 @@
 import express from "express";
 const propertyRoutes = express.Router();
-import { roleMiddleware } from "../middleware/auth.middleware.js";
+import { roleMiddleware ,authMiddleware} from "../middleware/auth.middleware.js";
 import {
   createProperty,
   getAllProperties,
@@ -9,10 +9,10 @@ import {
   deleteProperty,
 } from "../controllers/property.controller.js";
 
-propertyRoutes.post("/add", roleMiddleware(), createProperty);
+propertyRoutes.post("/add",authMiddleware, roleMiddleware(), createProperty);
 propertyRoutes.get("/", getAllProperties);
 propertyRoutes.get("/:propertyId", getPropertyById);
-propertyRoutes.put("/:propertyId", roleMiddleware(), updateProperty);
-propertyRoutes.delete("/:propertyId", roleMiddleware(), deleteProperty);
+propertyRoutes.put("/:propertyId", authMiddleware, roleMiddleware(), updateProperty);
+propertyRoutes.delete("/:propertyId", authMiddleware, roleMiddleware(), deleteProperty);
 
 export default propertyRoutes;

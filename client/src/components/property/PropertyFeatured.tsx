@@ -1,6 +1,33 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { getAllProperties } from "@/apis/propertyService";
+import Image from "next/image";
+import { PropertyAPIResponse } from "@/types/property";
+import Link from "next/link";
 
 const PropertyFeatured = () => {
+  const [data, setData] = useState<PropertyAPIResponse | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setIsLoading(true);
+      try {
+        const properties = await getAllProperties();
+
+        const featuredProperties = properties.properties.slice(0, 6);
+
+        properties.properties = featuredProperties;
+        setData(properties);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
   return (
     <>
       <section className="py-16 px-4 bg-gray-50">
@@ -10,13 +37,27 @@ const PropertyFeatured = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Placeholder for PropertyCard components */}
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md p-4">
-                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
-                <h3 className="text-xl font-semibold mb-2">Luxury Hotel {i}</h3>
-                <p className="text-gray-600 mb-2">Location {i}</p>
-                <p className="text-blue-600 font-bold">$299/night</p>
-              </div>
+            {data?.properties.map((i) => (
+              <Link href={`/property/${i._id}`} key={i._id}>
+                <div className="bg-white rounded-lg shadow-md p-4">
+                  <div className="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                    <Image
+                      src={i.images[0]}
+                      alt={i.title}
+                      width={400}
+                      height={192}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{i.title}</h3>
+                  <div className="flex justify-between items-center">
+                    <p className="text-gray-600 mb-2">{i.location.city}</p>
+                    <p className="text-blue-600 font-bold">
+                      ₹{i.pricePerNight}/night
+                    </p>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>

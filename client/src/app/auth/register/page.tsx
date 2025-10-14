@@ -7,6 +7,7 @@ import styles from "@/styles/auth.module.css";
 import Image from "next/image";
 import { register as registerUser } from "@/apis/authService";
 import { useAuth } from "@/store/authContext";
+import { notify } from "@/utils/notification";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
@@ -25,38 +25,37 @@ const Register = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
   };
 
   const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
     if (!formData.name.trim()) {
-      newErrors.name = "Full name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
+      notify.error({ message: "Full name is mandatory" });
+      return false;
+    }
+    if (formData.name.trim().length < 4) {
+      notify.error({ message: "Name must be at least 4 characters" });
+      return false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      notify.error({ message: "Email is mandatory" });
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      notify.error({ message: "Email is invalid" });
+      return false;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      notify.error({ message: "Password is mandatory" });
+      return false;
+    }
+    if (formData.password.length < 6) {
+      notify.error({ message: "Password must be at least 6 characters" });
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,15 +68,12 @@ const Register = () => {
     setIsLoading(true);
     try {
       const response = await registerUser(formData);
-
-      // Update auth context with user data
+      notify.success({ message: "Registration successful!" });
       login(response.user);
-
-      // Redirect to home page or dashboard
       router.push("/property");
-    } catch (error) {
-      setErrors({
-        submit: error instanceof Error ? error.message : "Registration failed",
+    } catch (error: any) {
+      notify.error({
+        message: error.message || "Failed to Register, please try again later.",
       });
     } finally {
       setIsLoading(false);
@@ -102,12 +98,6 @@ const Register = () => {
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {errors.submit && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm">{errors.submit}</p>
-              </div>
-            )}
-
             <div className="space-y-4">
               <div>
                 <input
@@ -116,16 +106,9 @@ const Register = () => {
                   placeholder="Full Name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`${
-                    styles.input
-                  } transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
-                    errors.name ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
                   disabled={isLoading}
                 />
-                {errors.name && (
-                  <p className="text-red-600 text-sm mt-1">{errors.name}</p>
-                )}
               </div>
 
               <div>
@@ -135,16 +118,9 @@ const Register = () => {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`${
-                    styles.input
-                  } transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
-                    errors.email ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
                   disabled={isLoading}
                 />
-                {errors.email && (
-                  <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-                )}
               </div>
 
               <div>
@@ -154,16 +130,9 @@ const Register = () => {
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`${
-                    styles.input
-                  } transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
-                    errors.password ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`${styles.input} transition-all duration-200 focus:ring-2 focus:ring-blue-500`}
                   disabled={isLoading}
                 />
-                {errors.password && (
-                  <p className="text-red-600 text-sm mt-1">{errors.password}</p>
-                )}
               </div>
             </div>
 

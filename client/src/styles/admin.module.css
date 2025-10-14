@@ -1,0 +1,66 @@
+.adminContainer {
+  /* min-height: 80vh; */
+  width: 95vw;
+  /* max-width: 1400px; */
+  margin: auto;
+  margin-top: 20px;
+  border-radius: 1rem;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: white;
+}
+
+.adminTitle {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #1f2937;
+}
+
+.toggleContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.toggleButtons {
+  background-color: #f3f4f6;
+  padding: 4px;
+  border-radius: 0.5rem;
+  display: flex;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.activeButton {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.activeButton:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.inactiveButton {
+  background-color: transparent !important;
+  color: #4b5563 !important;
+}
+
+.inactiveButton:hover {
+  background-color: #e5e7eb !important;
+}
+
+@media (max-width: 768px) {
+  .adminContainer {
+    width: 98vw;
+    padding: 15px;
+    margin-top: 10px;
+  }
+
+  .adminTitle {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+}

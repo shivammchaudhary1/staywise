@@ -1,6 +1,8 @@
 import React from "react";
 import Button from "../common/Button";
 import { BookingData } from "@/types/booking";
+import { formatDate } from "@/utils/formatDate";
+import { getStatusColor } from "@/utils/statusColor";
 
 interface SeeAllBookingProps {
   allUpcomingBookings: BookingData[];
@@ -15,28 +17,7 @@ const SeeAllBooking: React.FC<SeeAllBookingProps> = ({
   isLoading,
   onUpdateStatus,
 }) => {
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   // Get status badge color
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
 
   // Get property title safely
   const getPropertyTitle = (booking: BookingData) => {

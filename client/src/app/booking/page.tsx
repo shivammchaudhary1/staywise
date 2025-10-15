@@ -1,123 +1,139 @@
 "use client";
-import React, { useState } from "react";
-import BookingCard from "@/components/booking/BookingCard";
 
-const BookingPage = () => {
-  const [bookings] = useState([
-    {
-      _id: "68eceff4d084799714225f44",
-      userId: "68eceb49e82786aedaa0e915",
-      propertyId: "68ecee0c7595ee2e83eb9472",
-      checkIn: new Date("2025-10-15T00:00:00.000Z"),
-      checkOut: new Date("2025-10-16T00:00:00.000Z"),
-      guests: 2,
-      totalPrice: 9980,
-      status: "confirmed",
-      createdAt: new Date("2025-10-13T12:26:28.606Z"),
-      updatedAt: new Date("2025-10-13T12:26:28.606Z"),
-    },
-    {
-      _id: "68eceff4d084799714225f45",
-      userId: "68eceb49e82786aedaa0e916",
-      propertyId: "68ecee0c7595ee2e83eb9473",
-      checkIn: new Date("2025-10-20T00:00:00.000Z"),
-      checkOut: new Date("2025-10-22T00:00:00.000Z"),
-      guests: 4,
-      totalPrice: 15960,
-      status: "pending",
-      createdAt: new Date("2025-10-13T10:15:20.420Z"),
-      updatedAt: new Date("2025-10-13T10:15:20.420Z"),
-    },
-    {
-      _id: "68eceff4d084799714225f46",
-      userId: "68eceb49e82786aedaa0e917",
-      propertyId: "68ecee0c7595ee2e83eb9474",
-      checkIn: new Date("2025-10-25T00:00:00.000Z"),
-      checkOut: new Date("2025-10-28T00:00:00.000Z"),
-      guests: 1,
-      totalPrice: 7480,
-      status: "cancelled",
-      createdAt: new Date("2025-10-12T14:30:45.123Z"),
-      updatedAt: new Date("2025-10-12T16:45:30.789Z"),
-    },
-  ]);
+import React, { useState, useEffect } from "react";
+import BookingForm from "@/components/booking/BookingForm";
+import {
+  BookingValidationState,
+  BookingPriceBreakdown,
+  BookingRequest,
+} from "@/types/booking";
+import {
+  validateCheckInDate,
+  validateCheckOutDate,
+  calculateNumberOfNights,
+  calculateTotalPrice,
+} from "@/utils/bookingUtils";
+import { createBooking } from "@/apis/bookingService";
+import { useAuth } from "@/store/authContext";
+
+const CreateBooking = () => {
+  // Get auth context
+  const { getToken } = useAuth();
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState(1);
+  const [validation, setValidation] = useState<BookingValidationState>({
+    checkIn: true,
+    checkOut: true,
+  });
+  const [priceBreakdown, setPriceBreakdown] = useState<BookingPriceBreakdown>({
+    subtotal: 0,
+    gst: 0,
+    total: 0,
+    numberOfNights: 0,
+  });
+
+  // Mock data - in real app, this would come from props or URL params
+  const pricePerNight = 5000; // Example price
+  const propertyId = "property-123"; // Example property ID
+
+  const validateDates = () => {
+    if (!checkIn || !checkOut) return false;
+
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    const isValidCheckIn = validateCheckInDate(checkInDate);
+    const isValidCheckOut = validateCheckOutDate(checkInDate, checkOutDate);
+
+    setValidation({
+      checkIn: isValidCheckIn,
+      checkOut: isValidCheckOut,
+    });
+
+    return isValidCheckIn && isValidCheckOut;
+  };
+
+  const updatePriceBreakdown = () => {
+    if (!checkIn || !checkOut) return;
+
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    if (validateDates()) {
+      const nights = calculateNumberOfNights(checkInDate, checkOutDate);
+      const { subtotal, gst, total } = calculateTotalPrice(
+        pricePerNight,
+        nights,
+        guests
+      );
+
+      setPriceBreakdown({
+        subtotal,
+        gst,
+        total,
+        numberOfNights: nights,
+      });
+    }
+  };
+
+  useEffect(() => {
+    updatePriceBreakdown();
+  }, [checkIn, checkOut, guests]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (validateDates()) {
+      const bookingData: BookingRequest = {
+        propertyId,
+        checkIn: new Date(checkIn).toISOString(),
+        checkOut: new Date(checkOut).toISOString(),
+        guests,
+        totalPrice: priceBreakdown.total,
+      };
+
+      try {
+        console.log("Creating booking with data:", bookingData);
+
+        // Get token from AuthContext
+        const token = getToken();
+
+        if (!token) {
+          console.error("No authentication token found");
+          // Handle authentication error (redirect to login, show error, etc.)
+          return;
+        }
+
+        const response = await createBooking(bookingData, token);
+        console.log("Booking created successfully:", response);
+        // Handle success (redirect, show success message, etc.)
+      } catch (error) {
+        console.error("Error creating booking:", error);
+        // Handle error (show error message, etc.)
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Bookings</h1>
-          <p className="text-gray-600">
-            Manage and view all your property bookings
-          </p>
-        </div>
-
-        {/* Bookings List */}
-        {bookings.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 mb-4">
-              <svg
-                className="mx-auto h-16 w-16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No bookings found
-            </h3>
-            <p className="text-gray-500">You haven't made any bookings yet.</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {bookings.map((booking) => (
-              <BookingCard key={booking._id} booking={booking} />
-            ))}
-          </div>
-        )}
-
-        {/* Summary Stats */}
-        {bookings.length > 0 && (
-          <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Booking Summary
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold text-blue-600">
-                  {bookings.filter((b) => b.status === "confirmed").length}
-                </div>
-                <div className="text-sm text-gray-600">Confirmed Bookings</div>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold text-yellow-600">
-                  {bookings.filter((b) => b.status === "pending").length}
-                </div>
-                <div className="text-sm text-gray-600">Pending Bookings</div>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-2xl font-bold text-green-600">
-                  $
-                  {bookings
-                    .reduce((sum, b) => sum + b.totalPrice, 0)
-                    .toLocaleString()}
-                </div>
-                <div className="text-sm text-gray-600">Total Value</div>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-md mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Create Booking</h1>
+        <BookingForm
+          pricePerNight={pricePerNight}
+          checkIn={checkIn}
+          checkOut={checkOut}
+          guests={guests}
+          validation={validation}
+          priceBreakdown={priceBreakdown}
+          onCheckInChange={setCheckIn}
+          onCheckOutChange={setCheckOut}
+          onGuestsChange={setGuests}
+          onSubmit={handleSubmit}
+        />
       </div>
     </div>
   );
 };
 
-export default BookingPage;
+export default CreateBooking;

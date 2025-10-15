@@ -65,6 +65,7 @@ export const userBooking = async (
     const bookings = await Booking.find({
       userId,
       checkOut: { $gte: currentDate },
+      status: { $ne: "cancelled" },
     })
       .populate("propertyId", "title location images")
       .sort({ checkIn: 1 });
@@ -256,10 +257,10 @@ export const bookingHistory = async (
 
     const currentDate = new Date();
 
-    // Find all bookings with checkout dates in the past
+    // Find all bookings with checkout dates in the past OR cancelled bookings
     const bookingHistory = await Booking.find({
       userId,
-      checkOut: { $lt: currentDate },
+      $or: [{ checkOut: { $lt: currentDate } }, { status: "cancelled" }],
     })
       .populate("propertyId", "title location images")
       .sort({ checkOut: -1 });
@@ -268,6 +269,97 @@ export const bookingHistory = async (
       message: "Booking history retrieved successfully",
       success: true,
       bookingHistory,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message || "Unknown error occurred",
+    });
+  }
+};
+
+export const updateStatus = async (
+  req: RequestWithUser,
+  res: Response
+): Promise<Response | void> => {
+  try {
+    const { status } = req.body;
+    const { bookingId } = req.params;
+    const userId = req.user?.userId;
+    const isAdmin = req.user?.role === "admin";
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ message: "User not authenticated", success: false });
+    }
+
+    if (!bookingId || !status) {
+      return res.status(400).json({
+        message: "Booking ID and status are required",
+        success: false,
+      });
+    }
+
+    if (!Object.values(BookingStatus).includes(status as BookingStatus)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid status value", success: false });
+    }
+
+    // Find the booking first
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ message: "Booking not found", success: false });
+    }
+
+    // Check authorization
+    if (!isAdmin) {
+      // Regular users can only update their own bookings
+      if (booking.userId.toString() !== userId.toString()) {
+        return res.status(403).json({
+          message: "Not authorized to update this booking",
+          success: false,
+        });
+      }
+
+      // Regular users can only cancel their bookings
+      if (status !== BookingStatus.Cancelled) {
+        return res.status(403).json({
+          message: "Users can only cancel their bookings",
+          success: false,
+        });
+      }
+
+      // Users cannot cancel already completed or cancelled bookings
+      if (
+        booking.status === BookingStatus.Cancelled ||
+        booking.status === BookingStatus.Completed
+      ) {
+        return res.status(400).json({
+          message: `Cannot cancel a ${booking.status.toLowerCase()} booking`,
+          success: false,
+        });
+      }
+    }
+
+    // Update only the status
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { $set: { status } },
+      { new: true }
+    ).populate("propertyId", "title location images");
+
+    const action = isAdmin ? "updated" : "cancelled";
+
+    return res.status(200).json({
+      message: `Booking ${action} successfully`,
+      success: true,
+      booking: updatedBooking,
     });
   } catch (error: any) {
     return res.status(500).json({

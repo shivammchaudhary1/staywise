@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@/components/common/Button";
-
+import { sanitizePrice } from "@/utils/bookingUtils";
 import { PropertyFormData as APIPropertyFormData } from "@/types/property";
 
 // Frontend form data type (with string price for input handling)
@@ -55,6 +55,13 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           [locationField]: value,
         },
       }));
+    } else if (name === "pricePerNight") {
+      // For price field, ensure only integers are allowed
+      const intValue = value.replace(/[^\d]/g, ""); // Remove non-digits
+      setPropertyForm((prev) => ({
+        ...prev,
+        [name]: intValue,
+      }));
     } else {
       setPropertyForm((prev) => ({
         ...prev,
@@ -85,10 +92,10 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Convert string price to number before submitting
+    // Convert string price to integer (no decimals for Indian Rupees)
     const apiFormData: APIPropertyFormData = {
       ...propertyForm,
-      pricePerNight: parseFloat(propertyForm.pricePerNight),
+      pricePerNight: sanitizePrice(propertyForm.pricePerNight),
     };
     onSubmit(apiFormData);
   };
@@ -165,7 +172,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               htmlFor="pricePerNight"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Price Per Night ($) <span className="text-red-500">*</span>
+              Price Per Night (₹) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -173,10 +180,10 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               name="pricePerNight"
               value={propertyForm.pricePerNight}
               onChange={handleInputChange}
-              placeholder="Enter price per night"
+              placeholder="Enter price per night in rupees"
               required
               min="0"
-              step="0.01"
+              step="1"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

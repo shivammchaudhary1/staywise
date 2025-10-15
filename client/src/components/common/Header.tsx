@@ -44,7 +44,7 @@ const Header = () => {
               ) : isAuthenticated ? (
                 <>
                   <li>
-                    <Link href="/booking" className={styles.navLink}>
+                    <Link href="/mybooking" className={styles.navLink}>
                       My Bookings
                     </Link>
                   </li>

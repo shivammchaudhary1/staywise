@@ -1,15 +1,40 @@
 import React from "react";
 import Image from "next/image";
 import { SinglePropertyResponse } from "@/types/property";
+import { BookingValidationState, BookingPriceBreakdown } from "@/types/booking";
+import BookingForm from "@/components/booking/BookingForm";
 
-const PropertyCard = ({
-  selectedImageIndex,
-  setSelectedImageIndex,
-  data,
-}: {
+interface PropertyCardProps {
   selectedImageIndex: number;
   setSelectedImageIndex: (index: number) => void;
   data: SinglePropertyResponse["property"];
+  // Booking props passed from parent
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  validation: BookingValidationState;
+  priceBreakdown: BookingPriceBreakdown;
+  isBookingLoading: boolean;
+  onCheckInChange: (value: string) => void;
+  onCheckOutChange: (value: string) => void;
+  onGuestsChange: (value: number) => void;
+  onBookingSubmit: (e: React.FormEvent) => Promise<void>;
+}
+
+const PropertyCard: React.FC<PropertyCardProps> = ({
+  selectedImageIndex,
+  setSelectedImageIndex,
+  data,
+  checkIn,
+  checkOut,
+  guests,
+  validation,
+  priceBreakdown,
+  isBookingLoading,
+  onCheckInChange,
+  onCheckOutChange,
+  onGuestsChange,
+  onBookingSubmit,
 }) => {
   return (
     <div>
@@ -199,84 +224,19 @@ const PropertyCard = ({
 
             {/* Right Side - Booking Card */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
-                <div className="text-center mb-6">
-                  <div className="text-3xl font-bold text-gray-900">
-                    ₹{data.pricePerNight.toLocaleString()}
-                  </div>
-                  <div className="text-gray-600">per night</div>
-                </div>
-
-                {/* Check-in/Check-out */}
-                <div className="mb-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="border border-gray-300 rounded-lg p-3">
-                      <label className="block text-xs text-gray-600 mb-1">
-                        CHECK-IN
-                      </label>
-                      <input
-                        type="date"
-                        className="w-full text-sm focus:outline-none"
-                      />
-                    </div>
-                    <div className="border border-gray-300 rounded-lg p-3">
-                      <label className="block text-xs text-gray-600 mb-1">
-                        CHECK-OUT
-                      </label>
-                      <input
-                        type="date"
-                        className="w-full text-sm focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Guests */}
-                <div className="mb-6">
-                  <div className="border border-gray-300 rounded-lg p-3">
-                    <label className="block text-xs text-gray-600 mb-1">
-                      GUESTS
-                    </label>
-                    <select className="w-full text-sm focus:outline-none">
-                      <option>1 guest</option>
-                      <option>2 guests</option>
-                      <option>3 guests</option>
-                      <option>4 guests</option>
-                      <option>5 guests</option>
-                      <option>6 guests</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Book Button */}
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4">
-                  Book Now
-                </button>
-
-                <div className="text-center text-sm text-gray-600 mb-4">
-                  You won't be charged yet
-                </div>
-
-                {/* Price Breakdown */}
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">
-                      ₹{data.pricePerNight.toLocaleString()} x 5 nights
-                    </span>
-                    <span>₹{(data.pricePerNight * 5).toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-600">Service fee</span>
-                    <span>₹500</span>
-                  </div>
-                  <div className="border-t pt-2 flex justify-between items-center font-semibold">
-                    <span>Total</span>
-                    <span>
-                      ₹{(data.pricePerNight * 5 + 500).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <BookingForm
+                pricePerNight={data.pricePerNight}
+                checkIn={checkIn}
+                checkOut={checkOut}
+                guests={guests}
+                validation={validation}
+                priceBreakdown={priceBreakdown}
+                isLoading={isBookingLoading}
+                onCheckInChange={onCheckInChange}
+                onCheckOutChange={onCheckOutChange}
+                onGuestsChange={onGuestsChange}
+                onSubmit={onBookingSubmit}
+              />
             </div>
           </div>
         </div>

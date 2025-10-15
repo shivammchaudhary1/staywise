@@ -1,3 +1,21 @@
+export interface Property {
+  _id: string;
+  userId: string;
+  title: string;
+  description: string;
+  pricePerNight: number;
+  location: {
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+  };
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PropertyAPIResponse {
   pagination: {
     currentPage: number;
@@ -6,6 +24,10 @@ export interface PropertyAPIResponse {
     perPage: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
+  };
+  filters: {
+    search: string;
+    sortByPrice: string;
   };
   success: boolean;
   message: string;

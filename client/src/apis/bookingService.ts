@@ -90,3 +90,43 @@ export const updateStatus = async (
     throw error;
   }
 };
+
+//Admin Routes
+
+export const getAdminUpcomingBookings = async (token: string) => {
+  try {
+    console.log("Fetching admin upcoming bookings with token:", token);
+    const response = await fetch(`${API_URL}/booking/admin/upcoming`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log("Admin Upcoming Bookings:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching admin upcoming bookings:", error);
+    throw error;
+  }
+};
+
+export const getAdminBookingHistory = async (token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/booking/admin/history`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching admin upcoming bookings:", error);
+    throw error;
+  }
+};

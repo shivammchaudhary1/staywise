@@ -1,4 +1,5 @@
 import React from "react";
+import Loader from "@/components/common/Loader";
 import { BookingFormProps } from "@/types/booking";
 import { formatPrice } from "@/utils/bookingUtils";
 
@@ -146,6 +147,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
               <span>Total</span>
               <span>{formatPrice(priceBreakdown.total)}</span>
             </div>
+          </div>
+        )}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-center mb-4">
+            <Loader />
           </div>
         )}
 

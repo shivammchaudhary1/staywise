@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@/components/common/Button";
+import Loader from "@/components/common/Loader";
 import { sanitizePrice } from "@/utils/bookingUtils";
 import { PropertyFormData as APIPropertyFormData } from "@/types/property";
 
@@ -339,6 +340,13 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             Add Another Image
           </button>
         </div>
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex justify-center py-4">
+            <Loader />
+          </div>
+        )}
 
         {/* Form Actions */}
         <div className="flex gap-4 pt-6 border-t">

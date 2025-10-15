@@ -12,7 +12,11 @@ export interface Booking {
 
 export interface BookingData {
   _id: string;
-  userId: string;
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   propertyId: {
     _id: string;
     title: string;

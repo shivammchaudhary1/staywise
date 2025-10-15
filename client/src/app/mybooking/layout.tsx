@@ -2,7 +2,7 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import React from "react";
 
-const BookingLayout = ({ children }: { children: React.ReactNode }) => {
+const MyBookingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <Header />
@@ -12,4 +12,4 @@ const BookingLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default BookingLayout;
+export default MyBookingLayout;

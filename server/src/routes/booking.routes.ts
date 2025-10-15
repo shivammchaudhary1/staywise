@@ -6,6 +6,7 @@ import {
   deleteBooking,
   updateBooking,
   bookingHistory,
+  updateStatus,
   adminUpcomingBookings,
   adminBookingHistory,
 } from "../controllers/booking.controller.js";
@@ -17,6 +18,7 @@ bookingRoutes.get("/user-bookings", userBooking);
 bookingRoutes.get("/user-history", bookingHistory); //problem in this
 bookingRoutes.put("/:bookingId", updateBooking);
 bookingRoutes.delete("/:bookingId", deleteBooking);
+bookingRoutes.patch("/status/:bookingId", updateStatus); // PATCH route for status updates
 
 // Admin routes
 bookingRoutes.get("/admin/upcoming", roleMiddleware(), adminUpcomingBookings);

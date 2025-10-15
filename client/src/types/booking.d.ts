@@ -10,6 +10,35 @@ export interface Booking {
   status: "upcoming" | "completed" | "pending";
 }
 
+export interface BookingData {
+  _id: string;
+  userId: string;
+  propertyId: {
+    _id: string;
+    title: string;
+    location: {
+      address: string;
+      city: string;
+      state: string;
+      country: string;
+      zipCode: string;
+    };
+    images?: string[];
+  };
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MyBookingCardProps {
+  booking: BookingData;
+  handleCancelledBooking?: (booking: BookingData) => Promise<void>;
+}
+
 export interface BookingFormData {
   checkIn: string;
   checkOut: string;
@@ -48,4 +77,21 @@ export interface BookingRequest {
   checkOut: string;
   guests: number;
   totalPrice: number;
+}
+
+export interface BookingResponse {
+  message: string;
+  success: boolean;
+  booking: {
+    _id: string;
+    userId: string;
+    propertyId: {
+      _id: string;
+      name: string;
+      location: string;
+      pricePerNight: number;
+      image?: string;
+      [key: string]: any;
+    };
+  }[];
 }

@@ -19,9 +19,19 @@ const BookingForm: React.FC<BookingFormProps> = ({
     <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
       <div className="text-center mb-6">
         <div className="text-3xl font-bold text-gray-900">
-          {formatPrice(pricePerNight)}
+          {priceBreakdown.pricePerNightWithPersons > 0
+            ? formatPrice(priceBreakdown.pricePerNightWithPersons)
+            : formatPrice(pricePerNight)}
         </div>
-        <div className="text-gray-600">per night</div>
+        <div className="text-gray-600">
+          per night {guests > 1 && `(for ${guests} guests)`}
+        </div>
+        {guests > 1 && (
+          <div className="text-sm text-gray-500 mt-1">
+            Base: {formatPrice(pricePerNight)} +{" "}
+            {formatPrice((guests - 1) * 700)} for extra guests
+          </div>
+        )}
       </div>
 
       <form onSubmit={onSubmit}>
@@ -87,6 +97,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
               ))}
             </select>
           </div>
+          {guests > 1 && (
+            <div className="text-xs text-gray-500 mt-1 px-1">
+              💡 Extra guests: +₹700 per person per night
+            </div>
+          )}
         </div>
 
         {/* Price Breakdown */}
@@ -97,13 +112,37 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 {formatPrice(pricePerNight)} x {priceBreakdown.numberOfNights}{" "}
                 nights
               </span>
-              <span>{formatPrice(priceBreakdown.subtotal)}</span>
+              <span>{formatPrice(priceBreakdown.basePrice)}</span>
             </div>
+
+            {/* Show person charges if more than 1 guest */}
+            {guests > 1 && (
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600">
+                  Additional guests ({guests - 1} x ₹700 x{" "}
+                  {priceBreakdown.numberOfNights} nights)
+                </span>
+                <span>{formatPrice(priceBreakdown.personCharges)}</span>
+              </div>
+            )}
+
+            <div className="border-t pt-2 mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600 font-medium">
+                  Subtotal (before GST)
+                </span>
+                <span className="font-medium">
+                  {formatPrice(priceBreakdown.subtotal)}
+                </span>
+              </div>
+            </div>
+
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-600">GST (18%)</span>
               <span>{formatPrice(priceBreakdown.gst)}</span>
             </div>
-            <div className="border-t pt-2 flex justify-between items-center font-semibold">
+
+            <div className="border-t pt-2 flex justify-between items-center font-semibold text-lg">
               <span>Total</span>
               <span>{formatPrice(priceBreakdown.total)}</span>
             </div>

@@ -4,6 +4,7 @@ import { getAllProperties } from "@/apis/propertyService";
 import Image from "next/image";
 import { PropertyAPIResponse } from "@/types/property";
 import Link from "next/link";
+import { formatPrice } from "@/utils/bookingUtils";
 
 const PropertyFeatured = () => {
   const [data, setData] = useState<PropertyAPIResponse | null>(null);
@@ -12,11 +13,12 @@ const PropertyFeatured = () => {
     const fetchProperties = async () => {
       setIsLoading(true);
       try {
-        const properties = await getAllProperties();
+        const properties = await getAllProperties({
+          page: 1,
+          limit: 6,
+          sortByPrice: "desc",
+        });
 
-        const featuredProperties = properties.properties.slice(0, 6);
-
-        properties.properties = featuredProperties;
         setData(properties);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -53,7 +55,7 @@ const PropertyFeatured = () => {
                   <div className="flex justify-between items-center">
                     <p className="text-gray-600 mb-2">{i.location.city}</p>
                     <p className="text-blue-600 font-bold">
-                      ₹{i.pricePerNight}/night
+                      {formatPrice(i.pricePerNight)}/night
                     </p>
                   </div>
                 </div>

@@ -51,10 +51,13 @@ export interface BookingValidationState {
 }
 
 export interface BookingPriceBreakdown {
+  basePrice: number;
+  personCharges: number;
   subtotal: number;
   gst: number;
   total: number;
   numberOfNights: number;
+  pricePerNightWithPersons: number;
 }
 
 export interface BookingFormProps {

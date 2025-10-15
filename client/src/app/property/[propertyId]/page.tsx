@@ -38,10 +38,13 @@ const PropertyDetails = () => {
     checkOut: true,
   });
   const [priceBreakdown, setPriceBreakdown] = useState<BookingPriceBreakdown>({
+    basePrice: 0,
+    personCharges: 0,
     subtotal: 0,
     gst: 0,
     total: 0,
     numberOfNights: 0,
+    pricePerNightWithPersons: 0,
   });
   const [isBookingLoading, setIsBookingLoading] = useState(false);
 
@@ -95,17 +98,23 @@ const PropertyDetails = () => {
 
     if (validateDates()) {
       const nights = calculateNumberOfNights(checkInDate, checkOutDate);
-      const { subtotal, gst, total } = calculateTotalPrice(
-        data.property.pricePerNight,
-        nights,
-        guests
-      );
+      const {
+        basePrice,
+        personCharges,
+        subtotal,
+        gst,
+        total,
+        pricePerNightWithPersons,
+      } = calculateTotalPrice(data.property.pricePerNight, nights, guests);
 
       setPriceBreakdown({
+        basePrice,
+        personCharges,
         subtotal,
         gst,
         total,
         numberOfNights: nights,
+        pricePerNightWithPersons,
       });
     }
   };
@@ -151,8 +160,9 @@ const PropertyDetails = () => {
       setGuests(1);
 
       notify.success({ message: "Booking created successfully!" });
+      router.push("/mybooking");
     } catch (error) {
-      console.error("Error creating booking:", error);
+      // console.error("Error creating booking:", error);
       notify.error({ message: "Error creating booking. Please try again." });
     } finally {
       setIsBookingLoading(false);

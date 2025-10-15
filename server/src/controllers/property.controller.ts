@@ -62,13 +62,48 @@ export const getAllProperties = async (
 ): Promise<Response> => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = 10; // 10 properties per page
+    const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    const totalProperties = await Property.countDocuments();
+    // Search functionality with regex
+    const search = req.query.search as string;
+    const sortByPrice = req.query.sortByPrice as string;
+
+    // Build query object for filtering
+    let query: any = {};
+
+    // Add search functionality using regex
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), "i"); // Case-insensitive regex
+      query.$or = [
+        { title: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } },
+        { "location.city": { $regex: searchRegex } },
+        { "location.state": { $regex: searchRegex } },
+        { "location.country": { $regex: searchRegex } },
+        { "location.address": { $regex: searchRegex } },
+      ];
+    }
+
+    // Build sort object
+    let sortObject: any = { createdAt: -1 }; // Default sort by newest first
+
+    // Only support price sorting
+    if (sortByPrice === "asc") {
+      sortObject = { pricePerNight: 1 }; // Low to High
+    } else if (sortByPrice === "desc") {
+      sortObject = { pricePerNight: -1 }; // High to Low
+    }
+
+    // Count total properties matching the query
+    const totalProperties = await Property.countDocuments(query);
     const totalPages = Math.ceil(totalProperties / limit);
 
-    const properties = await Property.find().skip(skip).limit(limit);
+    // Fetch properties with filtering, sorting, and pagination
+    const properties = await Property.find(query)
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limit);
 
     return res.status(200).json({
       pagination: {
@@ -78,6 +113,10 @@ export const getAllProperties = async (
         perPage: limit,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
+      },
+      filters: {
+        search: search || "",
+        sortByPrice: sortByPrice || "",
       },
       message: "Properties retrieved successfully",
       success: true,

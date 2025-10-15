@@ -5,9 +5,30 @@ import {
   PropertyFormData,
 } from "@/types/property";
 
-export const getAllProperties = async () => {
+export interface PropertyQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortByPrice?: "asc" | "desc";
+}
+
+export const getAllProperties = async (params?: PropertyQueryParams) => {
   try {
-    const response = await fetch(`${API_URL}/properties`, {
+    // Build query string from parameters
+    const queryParams = new URLSearchParams();
+
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sortByPrice)
+      queryParams.append("sortByPrice", params.sortByPrice);
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `${API_URL}/properties?${queryString}`
+      : `${API_URL}/properties`;
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

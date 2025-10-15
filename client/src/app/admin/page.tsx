@@ -28,8 +28,8 @@ const AdminPage = () => {
     "addProperty"
   );
 
-  console.log("All Upcoming Bookings:", allUpcomingBookings);
-  console.log("All Booking History:", allBookingHistory);
+  // console.log("All Upcoming Bookings:", allUpcomingBookings);
+  // console.log("All Booking History:", allBookingHistory);
 
   const handleAddProperty = async (propertyData: PropertyFormData) => {
     try {

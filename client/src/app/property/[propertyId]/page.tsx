@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getPropertyById } from "@/apis/propertyService";
 import { createBooking } from "@/apis/bookingService";
 import PropertyCard from "@/components/property/PropertyCard";
+import Loader from "@/components/common/Loader";
 import { SinglePropertyResponse } from "@/types/property";
 import {
   BookingValidationState,
@@ -169,9 +170,12 @@ const PropertyDetails = () => {
     }
   };
 
-  // console.log("Property Data:", data);
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <Loader />
+      </div>
+    );
   }
 
   if (!data) {

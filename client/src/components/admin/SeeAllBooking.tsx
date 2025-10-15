@@ -125,11 +125,11 @@ const SeeAllBooking: React.FC<SeeAllBookingProps> = ({
         <h1 className="text-2xl font-semibold text-gray-800">
           Booking Management
         </h1>
-        <Button
+        {/* <Button
           text={isLoading ? "Loading..." : "Refresh Bookings"}
           disabled={isLoading}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-        />
+        /> */}
       </div>
 
       {/* Side by side layout */}

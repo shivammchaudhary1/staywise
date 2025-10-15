@@ -9,6 +9,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   guests,
   validation,
   priceBreakdown,
+  isLoading = false,
   onCheckInChange,
   onCheckOutChange,
   onGuestsChange,
@@ -112,10 +113,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
         {/* Book Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4"
-          disabled={!validation.checkIn || !validation.checkOut}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={!validation.checkIn || !validation.checkOut || isLoading}
         >
-          Book Now
+          {isLoading ? "Booking..." : "Book Now"}
         </button>
 
         <div className="text-center text-sm text-gray-600">

@@ -35,6 +35,7 @@ export interface BookingFormProps {
   guests: number;
   validation: BookingValidationState;
   priceBreakdown: BookingPriceBreakdown;
+  isLoading?: boolean;
   onCheckInChange: (value: string) => void;
   onCheckOutChange: (value: string) => void;
   onGuestsChange: (value: number) => void;

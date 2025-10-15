@@ -1,133 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { SinglePropertyResponse } from "@/types/property";
+import { BookingValidationState, BookingPriceBreakdown } from "@/types/booking";
 import BookingForm from "@/components/booking/BookingForm";
-import {
-  BookingValidationState,
-  BookingPriceBreakdown,
-  BookingRequest,
-} from "@/types/booking";
-import {
-  validateCheckInDate,
-  validateCheckOutDate,
-  calculateNumberOfNights,
-  calculateTotalPrice,
-} from "@/utils/bookingUtils";
-import { createBooking } from "@/apis/bookingService";
-import { useAuth } from "@/store/authContext";
 
-const PropertyCard = ({
-  selectedImageIndex,
-  setSelectedImageIndex,
-  data,
-}: {
+interface PropertyCardProps {
   selectedImageIndex: number;
   setSelectedImageIndex: (index: number) => void;
   data: SinglePropertyResponse["property"];
+  // Booking props passed from parent
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  validation: BookingValidationState;
+  priceBreakdown: BookingPriceBreakdown;
+  isBookingLoading: boolean;
+  onCheckInChange: (value: string) => void;
+  onCheckOutChange: (value: string) => void;
+  onGuestsChange: (value: number) => void;
+  onBookingSubmit: (e: React.FormEvent) => Promise<void>;
+}
+
+const PropertyCard: React.FC<PropertyCardProps> = ({
+  selectedImageIndex,
+  setSelectedImageIndex,
+  data,
+  checkIn,
+  checkOut,
+  guests,
+  validation,
+  priceBreakdown,
+  isBookingLoading,
+  onCheckInChange,
+  onCheckOutChange,
+  onGuestsChange,
+  onBookingSubmit,
 }) => {
-  // Get auth context
-  const { getToken } = useAuth();
-
-  // Booking form state management
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
-  const [validation, setValidation] = useState<BookingValidationState>({
-    checkIn: true,
-    checkOut: true,
-  });
-  const [priceBreakdown, setPriceBreakdown] = useState<BookingPriceBreakdown>({
-    subtotal: 0,
-    gst: 0,
-    total: 0,
-    numberOfNights: 0,
-  });
-
-  const validateDates = () => {
-    if (!checkIn || !checkOut) return false;
-
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-
-    const isValidCheckIn = validateCheckInDate(checkInDate);
-    const isValidCheckOut = validateCheckOutDate(checkInDate, checkOutDate);
-
-    setValidation({
-      checkIn: isValidCheckIn,
-      checkOut: isValidCheckOut,
-    });
-
-    return isValidCheckIn && isValidCheckOut;
-  };
-
-  const updatePriceBreakdown = () => {
-    if (!checkIn || !checkOut) return;
-
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-
-    if (validateDates()) {
-      const nights = calculateNumberOfNights(checkInDate, checkOutDate);
-      const { subtotal, gst, total } = calculateTotalPrice(
-        data.pricePerNight,
-        nights,
-        guests
-      );
-
-      setPriceBreakdown({
-        subtotal,
-        gst,
-        total,
-        numberOfNights: nights,
-      });
-    }
-  };
-
-  useEffect(() => {
-    updatePriceBreakdown();
-  }, [checkIn, checkOut, guests]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (validateDates()) {
-      const bookingData: BookingRequest = {
-        propertyId: data._id,
-        checkIn: new Date(checkIn).toISOString(),
-        checkOut: new Date(checkOut).toISOString(),
-        guests,
-        totalPrice: priceBreakdown.total,
-      };
-
-      try {
-        console.log("Creating booking with data:", bookingData);
-
-        // Get token from AuthContext
-        const token = getToken();
-
-        if (!token) {
-          console.error("No authentication token found");
-          // Handle authentication error (redirect to login, show error, etc.)
-          return;
-        }
-
-        const response = await createBooking(bookingData, token);
-        console.log("Booking created successfully:", response);
-
-        // Reset form after successful booking
-        setCheckIn("");
-        setCheckOut("");
-        setGuests(1);
-
-        // You can add success notification here
-        alert("Booking created successfully!");
-      } catch (error) {
-        console.error("Error creating booking:", error);
-        // Handle error (show error message, etc.)
-        alert("Error creating booking. Please try again.");
-      }
-    }
-  };
   return (
     <div>
       <div className="min-h-screen bg-gray-50">
@@ -323,10 +231,11 @@ const PropertyCard = ({
                 guests={guests}
                 validation={validation}
                 priceBreakdown={priceBreakdown}
-                onCheckInChange={setCheckIn}
-                onCheckOutChange={setCheckOut}
-                onGuestsChange={setGuests}
-                onSubmit={handleSubmit}
+                isLoading={isBookingLoading}
+                onCheckInChange={onCheckInChange}
+                onCheckOutChange={onCheckOutChange}
+                onGuestsChange={onGuestsChange}
+                onSubmit={onBookingSubmit}
               />
             </div>
           </div>

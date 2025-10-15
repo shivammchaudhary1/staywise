@@ -1,139 +1,65 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import BookingForm from "@/components/booking/BookingForm";
-import {
-  BookingValidationState,
-  BookingPriceBreakdown,
-  BookingRequest,
-} from "@/types/booking";
-import {
-  validateCheckInDate,
-  validateCheckOutDate,
-  calculateNumberOfNights,
-  calculateTotalPrice,
-} from "@/utils/bookingUtils";
-import { createBooking } from "@/apis/bookingService";
-import { useAuth } from "@/store/authContext";
+import React from "react";
+import Link from "next/link";
 
-const CreateBooking = () => {
-  // Get auth context
-  const { getToken } = useAuth();
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
-  const [validation, setValidation] = useState<BookingValidationState>({
-    checkIn: true,
-    checkOut: true,
-  });
-  const [priceBreakdown, setPriceBreakdown] = useState<BookingPriceBreakdown>({
-    subtotal: 0,
-    gst: 0,
-    total: 0,
-    numberOfNights: 0,
-  });
-
-  // Mock data - in real app, this would come from props or URL params
-  const pricePerNight = 5000; // Example price
-  const propertyId = "property-123"; // Example property ID
-
-  const validateDates = () => {
-    if (!checkIn || !checkOut) return false;
-
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-
-    const isValidCheckIn = validateCheckInDate(checkInDate);
-    const isValidCheckOut = validateCheckOutDate(checkInDate, checkOutDate);
-
-    setValidation({
-      checkIn: isValidCheckIn,
-      checkOut: isValidCheckOut,
-    });
-
-    return isValidCheckIn && isValidCheckOut;
-  };
-
-  const updatePriceBreakdown = () => {
-    if (!checkIn || !checkOut) return;
-
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
-
-    if (validateDates()) {
-      const nights = calculateNumberOfNights(checkInDate, checkOutDate);
-      const { subtotal, gst, total } = calculateTotalPrice(
-        pricePerNight,
-        nights,
-        guests
-      );
-
-      setPriceBreakdown({
-        subtotal,
-        gst,
-        total,
-        numberOfNights: nights,
-      });
-    }
-  };
-
-  useEffect(() => {
-    updatePriceBreakdown();
-  }, [checkIn, checkOut, guests]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (validateDates()) {
-      const bookingData: BookingRequest = {
-        propertyId,
-        checkIn: new Date(checkIn).toISOString(),
-        checkOut: new Date(checkOut).toISOString(),
-        guests,
-        totalPrice: priceBreakdown.total,
-      };
-
-      try {
-        console.log("Creating booking with data:", bookingData);
-
-        // Get token from AuthContext
-        const token = getToken();
-
-        if (!token) {
-          console.error("No authentication token found");
-          // Handle authentication error (redirect to login, show error, etc.)
-          return;
-        }
-
-        const response = await createBooking(bookingData, token);
-        console.log("Booking created successfully:", response);
-        // Handle success (redirect, show success message, etc.)
-      } catch (error) {
-        console.error("Error creating booking:", error);
-        // Handle error (show error message, etc.)
-      }
-    }
-  };
-
+const BookingPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Create Booking</h1>
-        <BookingForm
-          pricePerNight={pricePerNight}
-          checkIn={checkIn}
-          checkOut={checkOut}
-          guests={guests}
-          validation={validation}
-          priceBreakdown={priceBreakdown}
-          onCheckInChange={setCheckIn}
-          onCheckOutChange={setCheckOut}
-          onGuestsChange={setGuests}
-          onSubmit={handleSubmit}
-        />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
+        <div className="mb-6">
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Ready to Book?
+          </h1>
+          <p className="text-gray-600">
+            To make a booking, please select a property first. Browse our
+            available properties and book directly from the property details
+            page.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <Link
+            href="/property"
+            className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Browse Properties
+          </Link>
+          <Link
+            href="/"
+            className="block w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+          >
+            Go to Home
+          </Link>
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h3 className="font-semibold text-blue-900 mb-2">How to Book:</h3>
+          <ol className="text-sm text-blue-800 text-left space-y-1">
+            <li>1. Browse available properties</li>
+            <li>2. Select your preferred property</li>
+            <li>3. Choose your dates and guests</li>
+            <li>4. Complete your booking</li>
+          </ol>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CreateBooking;
+export default BookingPage;

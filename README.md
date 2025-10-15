@@ -8,7 +8,6 @@ A modern, full-stack property booking platform built with Next.js and Node.js. U
 - **Property Browsing** - View and search property listings
 - **Booking Management** - Create and manage property bookings
 - **Admin Panel** - Admin interface for managing properties and bookings
-- **Responsive Design** - Works seamlessly on all devices
 
 ## 🛠️ Tech Stack
 
@@ -114,7 +113,7 @@ staywisee/
 - **Property Management** - Browse, view, and manage property listings
 - **Booking System** - Create, view, and manage property bookings
 - **Admin Panel** - Admin interface for managing properties and all bookings
-- **Responsive UI** - Mobile-friendly design with Tailwind CSS
+
 
 ## 👨‍💻 Author
 

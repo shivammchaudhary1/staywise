@@ -81,7 +81,7 @@ staywisee/
    MONGODB_URI=mongodb://localhost:27017/staywise
    JWT_SECRET=your-jwt-secret-key
    JWT_EXPIRES_IN=7d
-   PORT=5000
+   PORT=8000
    FRONTEND_URL=http://localhost:3000
    ```
 
@@ -105,7 +105,7 @@ staywisee/
 
 5. **Access the app**
    - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8080/api
+   - Backend API: http://localhost:8080
 
 ## � Key Functionality
 
